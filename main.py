@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import random
 
 window_width = 400
 window_height = 600
@@ -21,6 +22,8 @@ def clean_panel():
     for i in range(5):
         for j in range(5):
             str[i][j].set(empty_char)
+    globals()['index_letter'] = 0
+    globals()['index_word'] = 0
 
 def text_style_gray(i,j):
     entry[i][j].config(disabledforeground="white")
@@ -40,11 +43,34 @@ def keypress_event(event):
         write_letter(globals()['index_word'], globals()['index_letter'], event.char)
         globals()['index_letter'] += 1
 
-
 def returnpress_event(event):
     print("Hai premuto: Invio")
     if globals()['index_letter'] == 5:
-        print("Qua controllo la parola")
+        check_word()
+
+def backspace_event(event):
+    print("Hai premuto: Backspace")
+    if globals()['index_letter'] > 0:
+        globals()['index_letter'] -= 1
+        str[globals()['index_word']][globals()['index_letter']].set(empty_char)
+
+def check_word():
+    word = ""
+    for i in range(5):
+        word += str[globals()['index_word']][i].get()
+    print("La parola inserita è "+word)
+    if word == globals()['secret_word'].upper():
+        print("Hai vinto")
+        clean_panel()
+    elif globals()['index_word'] < 4:
+        print("Prossima riga")
+        globals()['index_word'] += 1
+        globals()['index_letter'] = 0
+    else:
+        print("Hai perso")
+        
+def check_letter():
+    pass
 
 # definisco gli indici di parole e lettera
 index_word = 0
@@ -52,6 +78,7 @@ index_letter = 0
 
 # definisco le parole da giocare
 words = ["amore", "mondo", "cuore", "pesce"]
+secret_word = words[random.randint(0,len(words)-1)]
 
 window = tk.Tk()
 window.title("Wordle Game")
@@ -62,6 +89,9 @@ window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 window.resizable(False, False)
 window.bind("<Key>", lambda event: keypress_event(event))
 window.bind("<Return>", lambda event: returnpress_event(event))
+window.bind("<BackSpace>", lambda event: backspace_event(event))
+
+#funzione per il tasto backspace
 
 #header section
 header = tk.Frame(window, width=window_width, height=header_height, background="#00FFFF")
@@ -111,7 +141,13 @@ body_bottom_frame.pack()
 
 
 #footer section
-footer = tk.Frame(window, width=window_width, height=footer_height, background="green")
+footer = tk.Frame(window, width=window_width, height=footer_height, background="white")
 footer.pack()
+label_messaggi = tk.Label(footer, 
+                          width=window_width,
+                          text="Benvenuto nel gioco di Wordle. \nInserisci la parola da 5 lettere e premi invio per confermare!", 
+                          font=("Arial", 11), 
+                          background="white")
+label_messaggi.pack(pady=10)
 
 window.mainloop()
