@@ -7,16 +7,30 @@ header_bg ="red"
 header_height = 100
 body_height = 400
 footer_height = 100
+empty_char = " "
 
 #funzioni
 def write_word(word_index, word):
     for i in range(len(word)):
-        str[int(word_index)][i].set(word[i])
+        #convetto word[i] in uppercase
+        str[int(word_index)][i].set(word[i].upper())
 
 def clean_panel():
     for i in range(5):
         for j in range(5):
-            str[i][j].set("*")
+            str[i][j].set(empty_char)
+
+def text_style_gray(i,j):
+    entry[i][j].config(disabledforeground="white")
+    entry[i][j].config(disabledbackground="gray")
+
+def text_style_green(i,j):
+    entry[i][j].config(disabledforeground="white")
+    entry[i][j].config(disabledbackground="green")
+
+def text_style_orange(i,j):
+    entry[i][j].config(disabledforeground="white")
+    entry[i][j].config(disabledbackground="orange")
 
 window = tk.Tk()
 window.title("Wordle Game")
@@ -27,15 +41,15 @@ window.resizable(False, False)
 
 #header section
 header = tk.Frame(window, width=window_width, height=header_height, background=header_bg)
-header.pack()
+header.pack(pady=20)
 
-header_label = tk.Label(header, text="Wordle Game", font=("Arial", 25), background=header_bg)
+header_label = tk.Label(header, text="Wordle Game", font=("Arial", 32, "bold"))
 header_label.pack()
 
 
 #body section
 body = tk.Frame(window, width=window_width, height=body_height, background="white")
-body.pack()
+body.pack(pady=10)
 
 body_frame = []
 str = []
@@ -48,9 +62,9 @@ for i in range(5):
     entry.append([])
     for j in range(5):
         str[i].append(tk.StringVar())
-        str[i][j].set("*")
+        str[i][j].set(empty_char)
         entry[i].append(tk.Entry(body_frame[i], width=2, 
-                            font=("Arial", 25), 
+                            font=("Arial", 25, "bold"), 
                             justify="center", 
                             disabledbackground="white",
                             disabledforeground="black", 
@@ -60,12 +74,11 @@ for i in range(5):
                             state="disabled"))
         entry[i][j].pack(side="left")
 
-write_word(0, "ciao!")
-write_word(1, "cuore")
-write_word(2, "muore")
-write_word(3, "muore")
-write_word(4, "muore")
-clean_panel()
+write_word(0, "Amore")
+text_style_gray(0,0)
+text_style_green(0,1)
+text_style_orange(0,2)
+
 
 #footer section
 footer = tk.Frame(window, width=window_width, height=footer_height, background="green")
