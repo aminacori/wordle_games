@@ -11,6 +11,16 @@ footer_height = 100
 empty_char = " "
 
 #funzioni
+
+def evidenzia_lettera():
+    for i in range(5):
+        for j in range(5):
+            entry[i][j].config(borderwidth=1)
+    if index_letter < 5 and index_word < 5:
+        entry[index_word][index_letter].config(borderwidth=3, highlightbackground="white")
+    elif index_letter >= 5:
+        entry[index_word][4].config(borderwidth=3, highlightbackground="white")
+
 def write_word(word_index, word):
     for i in range(len(word)):
         str[int(word_index)][i].set(word[i].upper())
@@ -42,17 +52,21 @@ def keypress_event(event):
     if event.char.isalpha() and globals()['index_letter'] < 5:
         write_letter(globals()['index_word'], globals()['index_letter'], event.char)
         globals()['index_letter'] += 1
+    evidenzia_lettera()
 
 def returnpress_event(event):
     print("Hai premuto: Invio")
     if globals()['index_letter'] == 5:
         check_word()
+    evidenzia_lettera()
+    
 
 def backspace_event(event):
     print("Hai premuto: Backspace")
     if globals()['index_letter'] > 0:
         globals()['index_letter'] -= 1
         str[globals()['index_word']][globals()['index_letter']].set(empty_char)
+    evidenzia_lettera()
 
 def check_word():
     word = ""
@@ -61,16 +75,43 @@ def check_word():
     print("La parola inserita è "+word)
     if word == globals()['secret_word'].upper():
         print("Hai vinto")
-        clean_panel()
+        for i in range(5):
+            color_by_text("green", globals()['index_word'], i)
+        
     elif globals()['index_word'] < 4:
+        check_letter(word)
         print("Prossima riga")
         globals()['index_word'] += 1
         globals()['index_letter'] = 0
     else:
+        check_letter(word)
         print("Hai perso")
-        
-def check_letter():
-    pass
+
+def color_by_text(color, i, j):
+    if color == "gray":
+        text_style_gray(i,j)
+    elif color == "green":
+        text_style_green(i,j)
+    elif color == "orange":
+        text_style_orange(i,j)
+
+def check_letter(word):
+    lista_lettere = ["gray", "gray", "gray", "gray", "gray"]
+    s_word = globals()['secret_word'].upper()
+    word.upper()
+    print(s_word)
+    print(word)
+    for i in range(5):
+        if s_word[i] == word[i]:
+            lista_lettere[i] = "green"
+        elif word[i] in s_word:
+            lista_lettere[i] = "orange"
+            globals()['secret_word'][i].lower()
+    for i in range(5):
+        color_by_text(lista_lettere[i], globals()['index_word'], i)
+    
+
+
 
 # definisco gli indici di parole e lettera
 index_word = 0
@@ -78,7 +119,8 @@ index_letter = 0
 
 # definisco le parole da giocare
 words = ["amore", "mondo", "cuore", "pesce"]
-secret_word = words[random.randint(0,len(words)-1)]
+# secret_word = words[random.randint(0,len(words)-1)]
+secret_word = "amore"
 
 window = tk.Tk()
 window.title("Wordle Game")
@@ -138,7 +180,7 @@ body_bottom_frame.pack()
 # text_style_gray(0,0)
 # text_style_green(0,1)
 # text_style_orange(0,2)
-
+evidenzia_lettera()
 
 #footer section
 footer = tk.Frame(window, width=window_width, height=footer_height, background="white")
